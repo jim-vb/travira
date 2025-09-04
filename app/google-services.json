@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "371210580730",
+    "project_id": "tourguard-c7ac3",
+    "storage_bucket": "tourguard-c7ac3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371210580730:android:44a1ba59c60ea87e1b0f43",
+        "android_client_info": {
+          "package_name": "com.harshitcreations.tourguard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOyPDDhhroggj3lQAMSeTe1KLpQDfyZ0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

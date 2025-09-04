@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/alert_background"
+    android:gravity="center_horizontal">
+
+    <!-- Close button -->
+    <TextView
+        android:id="@+id/btnClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:textSize="18sp"
+        android:text="X"
+        android:contentDescription="Close"
+        android:padding="4dp" />
+
+    <!-- Icon -->
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/alert"
+        android:layout_marginTop="10dp" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="High-Risk Zone Alert"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="10dp" />
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="You have entered a high-risk zone. Please stay alert and avoid isolated areas. Consider moving to a safer location."
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginTop="8dp" />
+
+    <!-- Location info -->
+    <TextView
+        android:id="@+id/txtLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jasana Market Area, Faridabad\nRisk Level: High • Reported incidents: 3 this week"
+        android:textSize="14sp"
+        android:background="@drawable/bg_edittext"
+        android:padding="10dp"
+        android:backgroundTint="#FEF2F2"
+        android:textColor="#CE353B"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="20dp" />
+
+    <!-- View Map & Safe Routes -->
+
+    <!-- Dismiss -->
+    <Button
+        android:id="@+id/btnDismiss"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dismiss Alert"
+        android:background="@drawable/bg_edittext"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="20dp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Need immediate help?"/>
+
+    <!-- Emergency SOS -->
+    <Button
+        android:id="@+id/btnSOS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Emergency SOS"
+        android:textColor="#F02626"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/btn_sos_border" />
+
+</LinearLayout>
