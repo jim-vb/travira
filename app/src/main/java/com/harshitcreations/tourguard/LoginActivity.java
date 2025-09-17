@@ -118,10 +118,6 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                             }
 
-                            Toast.makeText(LoginActivity.this, "Phone Verified! Session Created", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, Dashboard.class);
-                            startActivity(intent);
-                            finish();
                         });
                     })
             );

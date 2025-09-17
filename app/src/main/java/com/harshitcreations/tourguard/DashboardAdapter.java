@@ -90,7 +90,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 ((QuickAccessViewHolder) holder).planButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        context.startActivity(new Intent(context, TripPlan.class));
+                        context.startActivity(new Intent(context, ItineraryActivity.class));
                     }
                 });
 
