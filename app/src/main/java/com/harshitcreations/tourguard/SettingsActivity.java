@@ -54,19 +54,27 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void handleLogout() {
-        account.deleteSession("current", new CoroutineCallback<>((result, error) -> {
-            runOnUiThread(() -> {
-                if (error != null) {
-                    Toast.makeText(SettingsActivity.this, "Logout failed! " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                } else {
+//        account.deleteSession("current", new CoroutineCallback<>((result, error) -> {
+//            runOnUiThread(() -> {
+//                if (error != null) {
+//                    Toast.makeText(SettingsActivity.this, "Logout failed! " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//                } else {
                     Toast.makeText(SettingsActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+                    clearSavedPhoneNumberFromPrefs();
                     finish();
-                }
-            });
-        }));
+//                }
+//            });
+//        }));
+    }
+
+    private void clearSavedPhoneNumberFromPrefs() {
+        getSharedPreferences("tourguard_prefs", MODE_PRIVATE)
+                .edit()
+                .remove("saved_phone")
+                .apply();
     }
 
 

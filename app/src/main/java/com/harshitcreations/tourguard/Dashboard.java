@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -57,10 +58,11 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        checkKreShadni();
 
-        Client client = AppwriteConfig.getClient(Dashboard.this);
-        client.setProject("68b6ad4500279297a573");
-        Account account = new Account(client);
+//        Client client = AppwriteConfig.getClient(Dashboard.this);
+//        client.setProject("68b6ad4500279297a573");
+//        Account account = new Account(client);
 
 
 ////        Check in database if tripId is available or not
@@ -75,21 +77,23 @@ public class Dashboard extends AppCompatActivity {
 
 
 
-        try {
-            account.get(new io.appwrite.coroutines.CoroutineCallback<>((user, error) -> {
-                runOnUiThread(() -> {
-                    if (error != null) {
-//                        Toast.makeText(Dashboard.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        // yaha phone number milega
-                        phone_number = user.getPhone();
-//                        Toast.makeText(Dashboard.this, "Phone: " + phoneNumber, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }));
-        } catch (AppwriteException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            account.get(new io.appwrite.coroutines.CoroutineCallback<>((user, error) -> {
+//                runOnUiThread(() -> {
+//                    if (error != null) {
+////                        Toast.makeText(Dashboard.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        // yaha phone number milega
+//                        phone_number = user.getPhone();
+////                        Toast.makeText(Dashboard.this, "Phone: " + phoneNumber, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }));
+//        } catch (AppwriteException e) {
+//            throw new RuntimeException(e);
+//        }
+
+        phone_number = getSavedPhoneNumberFromPrefs();
 
 
 //        logoutButton = findViewById(R.id.logoutButton);
@@ -224,6 +228,8 @@ public class Dashboard extends AppCompatActivity {
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
 
+//                        Toast.makeText(this, "Long & Lat:"+latitude+longitude, Toast.LENGTH_SHORT).show();
+
                         getCityAndState(latitude, longitude, callback);
                     } else {
                         Toast.makeText(Dashboard.this, "Location not available", Toast.LENGTH_SHORT).show();
@@ -275,7 +281,7 @@ public class Dashboard extends AppCompatActivity {
 //            save location on api
 
             // ✅ API call to save/update location
-            ApiService api = ApiClient.getClient().create(ApiService.class);
+//            ApiService api = ApiClient.getClient().create(ApiService.class);
 //            LocationRequest request = new LocationRequest(
 //                    phone_number, // <- yaha user ka actual phoneNumber pass karna
 //                    locationResult.getLatitude(),
@@ -327,6 +333,37 @@ public class Dashboard extends AppCompatActivity {
         });
 
         btnClose.setOnClickListener(v -> dialog.dismiss());
+    }
+
+    private void checkKreShadni() {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        apiService.getConnection().enqueue(new retrofit2.Callback<StatusResponse>() {
+            @Override
+            public void onResponse(Call<StatusResponse> call, retrofit2.Response<StatusResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(Dashboard.this,
+                            "API Connected: " + response.body().getStatus(),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(Dashboard.this,
+                            "API Error: " + response.code(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusResponse> call, Throwable t) {
+                Toast.makeText(Dashboard.this,
+                        "Connection Failed: " + t.getMessage(),
+                        Toast.LENGTH_LONG).show();
+                Log.e("API_CHECK", "Connection Failed", t);
+            }
+        });
+    }
+
+    private String getSavedPhoneNumberFromPrefs() {
+        return getSharedPreferences("tourguard_prefs", MODE_PRIVATE)
+                .getString("saved_phone", null); // Returns null if no phone is saved
     }
 
 }

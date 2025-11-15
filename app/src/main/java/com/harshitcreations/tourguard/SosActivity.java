@@ -1,5 +1,8 @@
 package com.harshitcreations.tourguard;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -8,8 +11,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import retrofit2.Call;
 
 public class SosActivity extends AppCompatActivity {
 
@@ -97,6 +103,8 @@ public class SosActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 showActivatedLayout();
+                // 🔹 Start SOS process
+                startSosProcess();
             }
         }.start();
     }
@@ -113,4 +121,72 @@ public class SosActivity extends AppCompatActivity {
         super.onDestroy();
         cancelTimer();
     }
+
+    private void startSosProcess() {
+        if (isNetworkAvailable()) {
+            // Network available → push directly to your custom API
+//            pushSosToServer();
+        } else {
+            // No network → start nearby device discovery & relay P2P
+            startNearbyDiscovery();
+        }
+    }
+
+    // ------------------- Network check -------------------
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo net = cm.getActiveNetworkInfo();
+        return net != null && net.isConnected();
+    }
+
+    // ------------------- Push to server -------------------
+//    private void pushSosToServer() {
+//        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+//
+//        // Example: use device phone number & current location
+////        EmergencyRequest emergency = new EmergencyRequest(
+////                getSavedPhoneNumberFromPrefs(),        // phone
+//////                currentLat,          // latitude
+//////                currentLng,          // longitude
+////                "SOS! Please help"   // message
+////        );
+//
+//        Call<Void> call = apiService.setEmergency(emergency);
+//        call.enqueue(new retrofit2.Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, retrofit2.Response<Void> response) {
+//                if (response.isSuccessful()) {
+//                    runOnUiThread(() -> {
+//                        Toast.makeText(SosActivity.this, "SOS sent successfully!", Toast.LENGTH_SHORT).show();
+//                    });
+//                } else {
+//                    runOnUiThread(() -> {
+//                        Toast.makeText(SosActivity.this, "Failed to send SOS!", Toast.LENGTH_SHORT).show();
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//                t.printStackTrace();
+//                runOnUiThread(() -> {
+//                    Toast.makeText(SosActivity.this, "Error sending SOS: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+//                });
+//            }
+//        });
+//    }
+
+
+    // ------------------- Nearby discovery -------------------
+    private void startNearbyDiscovery() {
+        // Here you would initialize your ConnectionsClient
+        // Start advertising + discovery using Nearby Connections API
+        // Implement the relay logic for sending the SOS to other devices
+    }
+
+    private String getSavedPhoneNumberFromPrefs() {
+        return getSharedPreferences("tourguard_prefs", MODE_PRIVATE)
+                .getString("saved_phone", null); // null means not saved
+    }
+
 }

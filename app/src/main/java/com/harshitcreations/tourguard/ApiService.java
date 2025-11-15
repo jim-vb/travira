@@ -9,25 +9,44 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface ApiService {
-    @POST("signup")
-    Call<Void> saveUser(@Body String user);
 
-    @GET("login")
-    Call<String> getUser(@Path("phone") String phone);
+    // ---------------- Users ----------------
+    @POST("api/users/signup")
+    Call<Void> saveUser(@Body UserRequest userRequest);
 
-    @POST("trip")
-    Call<Void> saveTrip(@Body String trip);
+    @GET("api/users/login")
+    Call<String> getUser(@Path("phone") String email, String password);
 
-    @GET("trip/{phone}/{tripId}")
-    Call<String> getTrip(@Path("phone") String phone, @Path("tripId") String tripId);
+    // ---------------- Digital IDs ----------------
+    @POST("api/digital-ids")
+    Call<Void> saveDigitalId(@Body String digitalId);
 
-    @POST("location")
+    @GET("api/digital-ids/{id}")
+    Call<String> getDigitalId(@Path("id") String id);
+
+    // ---------------- Locations ----------------
+    @POST("api/locations")
     Call<Void> saveLocation(@Body LocationRequest locationRequest);
 
-    @GET("safety/{phone}")
+    @GET("api/locations/{phone}")
+    Call<String> getLocation(@Path("phone") String phone);
+
+    // ---------------- Emergencies / SOS ----------------
+    @POST("api/emergencies")
+    Call<Void> setEmergency(@Body EmergencyRequest emergencyRequest);
+
+    @GET("api/emergencies/{phone}")
+    Call<String> getEmergency(@Path("phone") String phone);
+
+    // ---------------- Safety ----------------
+    @GET("api/safety/{phone}")
     Call<String> getSafety(@Path("phone") String phone);
 
-    @GET("check-zone")
+    // ---------------- Alerts ----------------
+    @GET("api/alerts")
     Call<List<String>> getAlerts();
-}
 
+    // ---------------- Check Connection ----------------
+    @GET("check")
+    Call<StatusResponse> getConnection();
+}

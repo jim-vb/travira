@@ -60,12 +60,9 @@ public class TripPlan extends AppCompatActivity {
 
         // 🔹 Initialize fields
         inputStart = findViewById(R.id.input_start);
-        inputName = findViewById(R.id.input_name);
-        inputEmail = findViewById(R.id.input_email);
         inputDestination = findViewById(R.id.input_destination);
         inputVehicle = findViewById(R.id.input_vehicle);
         inputHotel = findViewById(R.id.input_hotel);
-        inputAadhaar = findViewById(R.id.input_adhaar);
         inputEmergencyName = findViewById(R.id.input_emergency_name);
         inputEmergencyNumber = findViewById(R.id.input_emergency_number);
         spinnerRelation = findViewById(R.id.spinner_relation);
@@ -93,33 +90,33 @@ public class TripPlan extends AppCompatActivity {
     private void validateForm() {
 
         // 🔹 Name
-        String name = inputName.getText().toString().trim();
-        if (TextUtils.isEmpty(name)) {
-            inputName.setError("Enter Name");
-            inputName.requestFocus();
-            return;
-        }
-
-        // 🔹 Email
-        String email = inputEmail.getText().toString().trim();
-        if (TextUtils.isEmpty(email)) {
-            inputEmail.setError("Enter Email");
-            inputEmail.requestFocus();
-            return;
-        }
-        if (!email.contains("@")){
-            inputEmail.setError("Enter Valid Email");
-            inputEmail.requestFocus();
-            return;
-        }
-        // 🔹 Adhaar
-        String aadhaar = inputAadhaar.getText().toString().trim();
-//        String aadhaar = inputName.getText().toString().trim();
-        if (aadhaar.length() != 12) {
-            inputAadhaar.setError("Aadhaar must be 12 digits");
-            inputAadhaar.requestFocus();
-            return;
-        }
+//        String name = inputName.getText().toString().trim();
+//        if (TextUtils.isEmpty(name)) {
+//            inputName.setError("Enter Name");
+//            inputName.requestFocus();
+//            return;
+//        }
+//
+//        // 🔹 Email
+//        String email = inputEmail.getText().toString().trim();
+//        if (TextUtils.isEmpty(email)) {
+//            inputEmail.setError("Enter Email");
+//            inputEmail.requestFocus();
+//            return;
+//        }
+//        if (!email.contains("@")){
+//            inputEmail.setError("Enter Valid Email");
+//            inputEmail.requestFocus();
+//            return;
+//        }
+//        // 🔹 Adhaar
+//        String aadhaar = inputAadhaar.getText().toString().trim();
+////        String aadhaar = inputName.getText().toString().trim();
+//        if (aadhaar.length() != 12) {
+//            inputAadhaar.setError("Aadhaar must be 12 digits");
+//            inputAadhaar.requestFocus();
+//            return;
+//        }
 
         // 🔹 Starting Point
         if (TextUtils.isEmpty(inputStart.getText().toString().trim())) {
@@ -270,4 +267,12 @@ public class TripPlan extends AppCompatActivity {
         stopContainer.addView(stopLayout);
     }
 
+    @Override
+    public void onBackPressed() {
+
+        Intent intent = new Intent(TripPlan.this, Dashboard.class);
+        startActivity(intent);
+
+        super.onBackPressed();
+    }
 }
