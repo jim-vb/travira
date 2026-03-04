@@ -1,5 +1,7 @@
 package com.harshitcreations.tourguard;
 
+import androidx.annotation.StringRes;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -7,6 +9,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
 
@@ -14,19 +17,19 @@ public interface ApiService {
     @POST("api/users/signup")
     Call<Void> saveUser(@Body UserRequest userRequest);
 
-    @GET("api/users/login")
-    Call<String> getUser(@Path("phone") String email, String password);
+    @POST("api/users/login")
+    Call<LoginResponse> getUser(@Body CheckUser checkUser);
 
     // ---------------- Digital IDs ----------------
-    @POST("api/digital-ids")
-    Call<Void> saveDigitalId(@Body String digitalId);
+    @POST("api/trips")
+    Call<Trip> saveTrip(@Body Trip trip);
 
-    @GET("api/digital-ids/{id}")
-    Call<String> getDigitalId(@Path("id") String id);
+    @POST("api/emergency-notifications/sos")
+    Call<EmergencyRequest> setSos(@Body EmergencyRequest emergencyRequest);
 
     // ---------------- Locations ----------------
-    @POST("api/locations")
-    Call<Void> saveLocation(@Body LocationRequest locationRequest);
+    @GET("api/safety-score")
+    Call<String> getSafety();
 
     @GET("api/locations/{phone}")
     Call<String> getLocation(@Path("phone") String phone);
@@ -39,8 +42,8 @@ public interface ApiService {
     Call<String> getEmergency(@Path("phone") String phone);
 
     // ---------------- Safety ----------------
-    @GET("api/safety/{phone}")
-    Call<String> getSafety(@Path("phone") String phone);
+//    @GET("api/safety/{phone}")
+//    Call<String> getSafety(@Path("phone") String phone);
 
     // ---------------- Alerts ----------------
     @GET("api/alerts")

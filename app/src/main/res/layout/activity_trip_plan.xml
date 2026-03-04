@@ -293,7 +293,7 @@
                 android:id="@+id/btn_generate_trip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Generate Digital ID"
+                android:text="Start Your Journey"
                 android:layout_marginTop="8dp"
                 android:paddingRight="20dp"
                 android:paddingLeft="20dp"

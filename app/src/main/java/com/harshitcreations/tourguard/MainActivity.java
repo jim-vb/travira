@@ -71,30 +71,29 @@ public class MainActivity extends AppCompatActivity {
 
     // Handle login using local storage
     private void handleLoginWithLocalStorage() {
-        String savedPhone = getSavedPhoneNumberFromPrefs();
+        TokenManager tokenManager = new TokenManager(MainActivity.this);
+        String user_token = tokenManager.getToken();
 
-        if (savedPhone != null) {
+        if (user_token != null) {
             // If phone number is saved locally, verify tripId logic
 //            if (false) {  // Assume tripId is available
+
+            String trip_id = tokenManager.getToken();
+            if (true) {
+                Intent intent = new Intent(MainActivity.this, Profile.class);
+                startActivity(intent);
+                finish();
+            } else {
                 Intent intent = new Intent(MainActivity.this, Dashboard.class);
                 startActivity(intent);
                 finish();
-//            } else {
-//                Intent intent = new Intent(MainActivity.this, TripPlan.class);
-//                startActivity(intent);
-//                finish();
-//            }
+            }
+
         } else {
             // If phone number is not saved locally, show login screen
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             Toast.makeText(MainActivity.this, "Login to continue!", Toast.LENGTH_SHORT).show();
             finish();
         }
-    }
-
-    // Retrieve saved phone number from SharedPreferences
-    private String getSavedPhoneNumberFromPrefs() {
-        return getSharedPreferences("tourguard_prefs", MODE_PRIVATE)
-                .getString("saved_phone", null); // Returns null if no phone is saved
     }
 }

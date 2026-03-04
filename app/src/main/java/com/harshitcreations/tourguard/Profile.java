@@ -18,72 +18,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class Profile extends AppCompatActivity {
 
-    Button save, planTripButton;
-    EditText name, email, adhaar;
-    CardView profilecard1, profilecard;
-    TextView toolbarSet, toolbarProfile, nameShow, phoneShow, emailShow, adhaarShow;
+    Button goToDashboardBtn, planTripButton;
+    TextView displayToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        save = findViewById(R.id.saveButton);
-        planTripButton = findViewById(R.id.planTripButton);
-        profilecard = findViewById(R.id.profileCard);
-        profilecard1 = findViewById(R.id.profilecard1);
-        name = findViewById(R.id.input_name_profile);
-        email = findViewById(R.id.input_email_profile);
-        adhaar = findViewById(R.id.input_adhaar_profile);
-        toolbarSet = findViewById(R.id.toolbarSet);
-        toolbarProfile = findViewById(R.id.toolbarProfile);
-        nameShow = findViewById(R.id.nameShow);
-        emailShow = findViewById(R.id.emailShow);
-        phoneShow = findViewById(R.id.phoneShow);
-        adhaarShow = findViewById(R.id.adhaarShow);
-
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!name.getText().toString().isEmpty()){
-
-                    if (!email.getText().toString().isEmpty()) {
-
-                        if (adhaar.length() == 12) {
-
-//                                Save to backend
-
-                            String name1 = name.getText().toString();
-                            String email1 = email.getText().toString();
-                            String adhaar1 = adhaar.getText().toString();
-
-                            profilecard.setVisibility(View.GONE);
-                            save.setVisibility(View.GONE);
-                            toolbarSet.setVisibility(View.GONE);
-
-                            nameShow.setText("Name: " + name1);
-                            emailShow.setText("Email: " + email1);
-                            adhaarShow.setText("Adhaar: " + adhaar1);
-
-                            profilecard1.setVisibility(View.VISIBLE);
-                            planTripButton.setVisibility(View.VISIBLE);
-                            toolbarProfile.setVisibility(View.VISIBLE);
-
-
-                        } else {
-                            Toast.makeText(Profile.this, "Enter valid Adhaar", Toast.LENGTH_SHORT).show();
-                        }
-
-                    } else {
-                        Toast.makeText(Profile.this, "Enter valid Email", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    Toast.makeText(Profile.this, "Enter valid Name", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        });
+        goToDashboardBtn = findViewById(R.id.goToDashboardBtn);
+        planTripButton = findViewById(R.id.planNextBtn);
+        displayToken = findViewById(R.id.displayToken);
 
         planTripButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +38,10 @@ public class Profile extends AppCompatActivity {
                 finish();
             }
         });
+
+//        String token = getIntent().getStringExtra("token");
+//
+//        displayToken.setText(token);
 
     }
 }

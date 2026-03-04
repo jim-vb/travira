@@ -20,7 +20,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
 import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TripPlan extends AppCompatActivity {
 
@@ -89,35 +94,6 @@ public class TripPlan extends AppCompatActivity {
 
     private void validateForm() {
 
-        // 🔹 Name
-//        String name = inputName.getText().toString().trim();
-//        if (TextUtils.isEmpty(name)) {
-//            inputName.setError("Enter Name");
-//            inputName.requestFocus();
-//            return;
-//        }
-//
-//        // 🔹 Email
-//        String email = inputEmail.getText().toString().trim();
-//        if (TextUtils.isEmpty(email)) {
-//            inputEmail.setError("Enter Email");
-//            inputEmail.requestFocus();
-//            return;
-//        }
-//        if (!email.contains("@")){
-//            inputEmail.setError("Enter Valid Email");
-//            inputEmail.requestFocus();
-//            return;
-//        }
-//        // 🔹 Adhaar
-//        String aadhaar = inputAadhaar.getText().toString().trim();
-////        String aadhaar = inputName.getText().toString().trim();
-//        if (aadhaar.length() != 12) {
-//            inputAadhaar.setError("Aadhaar must be 12 digits");
-//            inputAadhaar.requestFocus();
-//            return;
-//        }
-
         // 🔹 Starting Point
         if (TextUtils.isEmpty(inputStart.getText().toString().trim())) {
             inputStart.setError("Enter starting location");
@@ -174,6 +150,9 @@ public class TripPlan extends AppCompatActivity {
         }
 
         // 🔹 Stops Validation (jitne bhi add kiye gaye unme se koi empty na ho)
+        // 🔹 Single string jisme sab stops comma-separated store honge
+        StringBuilder stopBuilder = new StringBuilder();
+
         for (int i = 0; i < stopContainer.getChildCount(); i++) {
             View child = stopContainer.getChildAt(i);
 
@@ -192,24 +171,74 @@ public class TripPlan extends AppCompatActivity {
                             stopField.requestFocus();
                             return;
                         }
+
+                        // 👉 Add to single string (comma separated)
+                        if (stopBuilder.length() > 0) {
+                            stopBuilder.append(",");
+                        }
+                        stopBuilder.append(stopText);
                     }
                 }
             }
         }
 
+// 🔹 Final comma-separated string
+        String stopsCommaSeparated = stopBuilder.toString();
+
+
+
         // ✅ Agar sab valid hai
+
+        String tripName = "null";
+        String startingLocation = inputStart.getText().toString();
+        String endingLocation = inputDestination.getText().toString();
+        String startingDandT = "null";
+        String endingDandT = "null";
+        String intermediateStops = stopsCommaSeparated;
+        String transportation = inputVehicle.getText().toString();
+        String hotelName = inputHotel.getText().toString();
+        String contactName = inputEmergencyName.getText().toString();
+        String emergencyContact = inputEmergencyNumber.getText().toString();
+
+        Trip trip = new Trip(tripName, startingLocation, endingLocation, startingDandT, endingDandT, intermediateStops, transportation, hotelName, contactName, emergencyContact);
+
+        ApiService apiService = ApiClient.getClient(TripPlan.this).create(ApiService.class);
+
+        Call<Trip> call = apiService.saveTrip(trip);
+
+        call.enqueue(new Callback<Trip>() {
+            @Override
+            public void onResponse(Call<Trip> call, Response<Trip> response) {
+
+                if (response.isSuccessful()) {
+                    Toast.makeText(TripPlan.this, "Trip Created!", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(TripPlan.this, DigitalIdActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    Toast.makeText(TripPlan.this, "Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Trip> call, Throwable t) {
+                Toast.makeText(TripPlan.this, "Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
 //        save all the trip details at the database
-
-        String tripId = "TRIP-" + System.currentTimeMillis() + UUID.randomUUID().toString();
-
-        Intent intent = new Intent(TripPlan.this, DigitalIdActivity.class);
-        startActivity(intent);
-        finish();
-
-
-        Toast.makeText(this, "Trip ID Generated Successfully ✅", Toast.LENGTH_LONG).show();
+//
+//        String tripId = "TRIP-" + System.currentTimeMillis() + UUID.randomUUID().toString();
+//
+//        Intent intent = new Intent(TripPlan.this, DigitalIdActivity.class);
+//        startActivity(intent);
+//        finish();
+//
+//
+//        Toast.makeText(this, "Trip ID Generated Successfully ✅", Toast.LENGTH_LONG).show();
 
     }
 
@@ -275,4 +304,5 @@ public class TripPlan extends AppCompatActivity {
 
         super.onBackPressed();
     }
+
 }

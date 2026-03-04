@@ -41,6 +41,8 @@ import io.appwrite.coroutines.CoroutineCallback;
 import io.appwrite.exceptions.AppwriteException;
 import io.appwrite.services.Account;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -164,6 +166,45 @@ public class Dashboard extends AppCompatActivity {
             refreshLocation();
 
         }
+
+//        ApiService apiService = ApiClient.getClient(Dashboard.this).create(ApiService.class);
+//
+//        Call<Void> call = apiService.getSafety();
+//
+//        call.enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//
+//                if (!response.isSuccessful() || response.body() == null) {
+//                    Toast.makeText(Dashboard.this, "Server error", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                String trip_id = response.message().toString();
+//
+//                if (trip_id != null && !trip_id.isEmpty()) {
+//
+//                    TokenManager tokenManager = new TokenManager(Dashboard.this);
+//                    tokenManager.saveToken(trip_id);
+//
+//                    Toast.makeText(Dashboard.this, "Login Success!", Toast.LENGTH_SHORT).show();
+//
+//                    Intent intent = new Intent(Dashboard.this, Profile.class);
+//                    startActivity(intent);
+//                    finish();
+//
+//                } else {
+//                    Toast.makeText(Dashboard.this, "Invalid login", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//                Toast.makeText(Dashboard.this, "Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+
 
 
         recyclerView.setAdapter(adapter);
@@ -336,7 +377,7 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void checkKreShadni() {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        ApiService apiService = ApiClient.getClient(Dashboard.this).create(ApiService.class);
         apiService.getConnection().enqueue(new retrofit2.Callback<StatusResponse>() {
             @Override
             public void onResponse(Call<StatusResponse> call, retrofit2.Response<StatusResponse> response) {

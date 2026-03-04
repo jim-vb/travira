@@ -73,6 +73,13 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 break;
 
+//            case DashboardItemType.SAFETY_SCORE:
+//
+//
+//
+//
+//                ((SafetyScoreViewHolder) holder).safetyScoreText.setText("");
+
             case DashboardItemType.LOCATION:
                 LocationViewHolder locationHolder = (LocationViewHolder) holder;
                 locationHolder.locationTextView.setText(item.getData());
