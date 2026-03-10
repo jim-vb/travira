@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_tip">
@@ -8,303 +9,211 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <!-- 🔼 Heading ekdum top & sides se chipki rahegi -->
-        <LinearLayout
+        <!-- TITLE -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Plan Your Trip"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#1E1E1E"
+            android:layout_marginBottom="20dp"/>
+
+
+        <!-- ROUTE DETAILS -->
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="5dp"
-            android:elevation="4dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="16dp">
 
-            <TextView
-                android:id="@+id/header_title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Plan Your Trip"
-                android:gravity="center"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#222222"
-                android:layout_marginStart="16dp" />
+                android:orientation="vertical"
+                android:padding="18dp">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Route Details"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
 
-        <!-- 🔽 Baaki sab content me 12dp sides & bottom ka gap -->
-        <LinearLayout
+                <EditText
+                    android:id="@+id/startLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Start Location"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"/>
+
+                <EditText
+                    android:id="@+id/destinationLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Destination"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"
+                    android:layout_marginTop="10dp"/>
+
+                <EditText
+                    android:id="@+id/intermediateStops"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Intermediate Stops (optional)"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"
+                    android:layout_marginTop="10dp"/>
+
+                <EditText
+                    android:id="@+id/startTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Start Date &amp; Time"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"
+                    android:layout_marginTop="10dp"/>
+
+                <EditText
+                    android:id="@+id/endTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="End Date &amp; Time"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"
+                    android:layout_marginTop="10dp"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- EMERGENCY CONTACT -->
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="12dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="16dp">
 
-
-
-            <!-- 🟢 Section: Trip Route (Start, Destination, Stops) -->
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                card_view:cardCornerRadius="10dp"
-                card_view:cardElevation="4dp">
+                android:orientation="vertical"
+                android:padding="18dp">
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="16dp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Emergency Contact"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <EditText
+                    android:id="@+id/contactName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="50dp"
+                    android:hint="Contact Name"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"/>
 
-                    <TextView
-                        android:text="Trip Route"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_gravity="center"
-                        android:textColor="#333333"
-                        android:layout_marginBottom="8dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/contactNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Contact Number"
+                    android:inputType="phone"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"
+                    android:layout_marginTop="10dp"/>
 
-                    <!-- Starting Point -->
-                    <TextView
-                        android:text="Enter starting location"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+            </LinearLayout>
 
-                    <EditText
-                        android:id="@+id/input_start"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Starting Point"
-                        android:background="@drawable/bg_edittext"
-                        android:padding="10dp"
-                        android:textColor="#000000"/>
+        </androidx.cardview.widget.CardView>
 
-                    <!-- Stops -->
-                    <TextView
-                        android:text="Intermediate Stops (Optional)"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
 
-                    <LinearLayout
-                        android:id="@+id/stopContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="4dp" />
+        <!-- OPTIONAL DETAILS -->
 
-                    <Button
-                        android:id="@+id/btn_add_stop"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+ Add Stop"
-                        android:layout_marginTop="8dp"
-                        android:backgroundTint="#2196F3"
-                        android:textColor="#FFFFFF"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="24dp">
 
-                    <!-- Destination -->
-                    <TextView
-                        android:text="Enter ending location"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <EditText
-                        android:id="@+id/input_destination"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Destination"
-                        android:background="@drawable/bg_edittext"
-                        android:padding="10dp"
-                        android:textColor="#000000"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- 🟢 Section: Vehicle / Transport -->
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                card_view:cardCornerRadius="10dp"
-                card_view:cardElevation="4dp">
+                android:orientation="vertical"
+                android:padding="18dp">
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="16dp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Optional Details"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <EditText
+                    android:id="@+id/hotelName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="50dp"
+                    android:hint="Hotel Name"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"/>
 
-                    <TextView
-                        android:text="Travel Information"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_gravity="center"
-                        android:textColor="#333333"
-                        android:layout_marginBottom="8dp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"/>
-
-                    <TextView
-                        android:text="Enter transportation (with vehicle no. if applicable)"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <EditText
-                        android:id="@+id/input_vehicle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Vehicle / Public Transport"
-                        android:background="@drawable/bg_edittext"
-                        android:padding="10dp"
-                        android:textColor="#000000"/>
-
-                    <TextView
-                        android:text="Enter hotel name (with landmark)"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <EditText
-                        android:id="@+id/input_hotel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Hotel Name"
-                        android:background="@drawable/bg_edittext"
-                        android:padding="10dp"
-                        android:textColor="#000000"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- 🟢 Section: Emergency Contact -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                card_view:cardCornerRadius="10dp"
-                card_view:cardElevation="4dp">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="16dp"
+                <EditText
+                    android:id="@+id/transportType"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="50dp"
+                    android:hint="Transport Type"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"
+                    android:layout_marginTop="10dp"/>
 
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Emergency Contact details"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_gravity="center"
-                        android:textColor="#333333"
-                        android:layout_marginBottom="8dp" />
+            </LinearLayout>
 
-                    <TextView
-                        android:text="Enter contact name"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+        </androidx.cardview.widget.CardView>
 
-                    <EditText
-                        android:id="@+id/input_emergency_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Contact Name"
-                        android:maxLines="1"
-                        android:background="@drawable/bg_edittext"
-                        android:padding="10dp"
-                        android:textColor="#000000"/>
+        <Button
+            android:id="@+id/previewRouteBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Preview Route on Map"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/edittext_bg"
+            android:textColor="#1F92E4"/>
 
-                    <TextView
-                        android:text="Enter contact number"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+        <!-- START TRIP BUTTON -->
 
-                    <EditText
-                        android:id="@+id/input_emergency_number"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Contact Number"
-                        android:inputType="phone"
-                        android:maxLength="10"
-                        android:background="@drawable/bg_edittext"
-                        android:padding="10dp"
-                        android:textColor="#000000"/>
+        <Button
+            android:id="@+id/startTripBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="Start Trip"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:background="@drawable/bg_sheild"
+            android:textColor="@android:color/white"/>
 
-                    <!-- Relation -->
-                    <TextView
-                        android:text="Relation"
-                        android:textSize="14sp"
-                        android:layout_marginTop="14dp"
-                        android:textStyle="bold"
-                        android:textColor="#555555"
-                        android:layout_marginBottom="4dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <Spinner
-                        android:id="@+id/spinner_relation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:background="@drawable/bg_edittext"
-                        android:layout_marginTop="4dp"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- 🔵 Generate Button -->
-            <Button
-                android:id="@+id/btn_generate_trip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start Your Journey"
-                android:layout_marginTop="8dp"
-                android:paddingRight="20dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_generate_btn"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
     </LinearLayout>
+
 </ScrollView>

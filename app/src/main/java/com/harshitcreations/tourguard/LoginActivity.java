@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
                                 if (!response.isSuccessful() || response.body() == null) {
-                                    Toast.makeText(LoginActivity.this, "Server error", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
 

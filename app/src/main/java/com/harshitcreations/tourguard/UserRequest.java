@@ -1,5 +1,5 @@
 package com.harshitcreations.tourguard;
-
+//SIGNUP REQUEST
 public class UserRequest {
     private String fullName;
     private String email;
@@ -14,4 +14,5 @@ public class UserRequest {
         this.password = password;
         this.aadhaarNumber = aadhaarNumber;
     }
+
 }

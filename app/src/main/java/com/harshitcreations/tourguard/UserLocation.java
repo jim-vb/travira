@@ -1,12 +1,12 @@
 package com.harshitcreations.tourguard;
 
-public class LocationResult {
+public class UserLocation {
     private double latitude;
     private double longitude;
     private String city;
     private String state;
 
-    public LocationResult(double latitude, double longitude, String city, String state) {
+    public UserLocation(double latitude, double longitude, String city, String state) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.city = city;

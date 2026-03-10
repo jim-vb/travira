@@ -16,13 +16,22 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Context context;
     private OnLocationRefreshListener refreshListener;
     private OnAlertClicked alertClicked;
+    private GreetingViewHolder.OnSettingsClicked settingsClicked;
 
-    public DashboardAdapter(Context context, List<DashboardItem> items, OnLocationRefreshListener refreshListener, OnAlertClicked alertClicked) {
+    private String tripId;
+
+    public DashboardAdapter(Context context, List<DashboardItem> items,
+                            OnLocationRefreshListener refreshListener,
+                            OnAlertClicked alertClicked,
+                            GreetingViewHolder.OnSettingsClicked settingsClicked,
+                            String tripId) {
+
         this.context = context;
         this.items = items;
         this.refreshListener = refreshListener;
         this.alertClicked = alertClicked;
-//        this.logoutListener = logoutListener;
+        this.settingsClicked = settingsClicked;
+        this.tripId = tripId;
     }
 
     @Override
@@ -36,7 +45,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         switch (viewType) {
             case DashboardItemType.GREETING:
                 view = LayoutInflater.from(context).inflate(R.layout.greeting_item, parent, false);
-                return new GreetingViewHolder(view);
+                return new GreetingViewHolder(view, settingsClicked);
 
             case DashboardItemType.SAFETY_SCORE:
                 view = LayoutInflater.from(context).inflate(R.layout.safety_score_item, parent, false);
@@ -61,28 +70,40 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
         DashboardItem item = items.get(position);
 
         switch (item.getType()) {
-            case DashboardItemType.GREETING:
-                ((GreetingViewHolder) holder).bind(item.getData());
 
-                ((GreetingViewHolder) holder).settingsBtn.setOnClickListener(v -> {
-                    context.startActivity(new Intent(context, SettingsActivity.class));
-                });
+            case DashboardItemType.GREETING:
+
+                GreetingViewHolder greetingHolder = (GreetingViewHolder) holder;
+
+                String userName = item.getData(); // username passed from Dashboard
+
+                greetingHolder.bind(userName);
 
                 break;
 
-//            case DashboardItemType.SAFETY_SCORE:
-//
-//
-//
-//
-//                ((SafetyScoreViewHolder) holder).safetyScoreText.setText("");
 
             case DashboardItemType.LOCATION:
+
                 LocationViewHolder locationHolder = (LocationViewHolder) holder;
-                locationHolder.locationTextView.setText(item.getData());
+
+                String data = item.getData();
+
+                if (data != null && data.contains("|")) {
+
+                    String[] parts = data.split("\\|");
+
+                    locationHolder.locationTextView.setText(parts[0]);
+                    locationHolder.locationLastUpdateView.setText(parts[1]);
+
+                } else {
+
+                    locationHolder.locationTextView.setText(data);
+                    locationHolder.locationLastUpdateView.setText("");
+                }
 
                 locationHolder.refreshButton.setOnClickListener(v -> {
                     if (refreshListener != null) {
@@ -92,37 +113,30 @@ public class DashboardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 break;
 
-            // Similarly handle other view types with dynamic data
+
             case DashboardItemType.QUICK_ACCESS:
-                ((QuickAccessViewHolder) holder).planButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        context.startActivity(new Intent(context, ItineraryActivity.class));
-                    }
+
+                QuickAccessViewHolder quickHolder = (QuickAccessViewHolder) holder;
+
+                quickHolder.planButton.setOnClickListener(v -> {
+
+                    Intent intent = new Intent(context, TripItineraryActivity.class);
+                    intent.putExtra("tripId", tripId);
+
+                    context.startActivity(intent);
                 });
 
-                ((QuickAccessViewHolder) holder).sosButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        context.startActivity(new Intent(context, SosActivity.class));
-                    }
-                });
+                quickHolder.sosButton.setOnClickListener(v ->
+                        context.startActivity(new Intent(context, SosActivity.class))
+                );
 
-                ((QuickAccessViewHolder) holder).viewIdButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        context.startActivity(new Intent(context, DigitalIdActivity.class));
-                    }
-                });
-
-                ((QuickAccessViewHolder) holder).alertButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
+                quickHolder.alertButton.setOnClickListener(v -> {
+                    if (alertClicked != null) {
                         alertClicked.onAlertReceived();
-
                     }
                 });
+
+                break;
         }
     }
 

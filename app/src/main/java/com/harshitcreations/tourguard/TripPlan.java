@@ -1,206 +1,132 @@
 package com.harshitcreations.tourguard;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
+import java.util.Calendar;
+import android.net.Uri;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TripPlan extends AppCompatActivity {
 
-    private EditText inputStart, inputDestination, inputVehicle, inputHotel,
-            inputAadhaar, inputEmergencyName, inputEmergencyNumber, inputName, inputEmail;
-    private Button btnGenerateTrip, btnAddStop;
-    private Spinner spinnerRelation;
-    private LinearLayout stopContainer;
-    private int stopCount = 0; // stop numbering ke liye
+    private EditText startLocation, destinationLocation;
+    private EditText startTime, endTime;
+    private EditText intermediateStops;
+    private EditText contactName, contactNumber;
+    private EditText hotelName, transportType;
+
+    private Button startTripBtn;
+    Button previewRouteBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_plan);
 
-        spinnerRelation = findViewById(R.id.spinner_relation);
+        startLocation = findViewById(R.id.startLocation);
+        destinationLocation = findViewById(R.id.destinationLocation);
+        intermediateStops = findViewById(R.id.intermediateStops);
+        previewRouteBtn = findViewById(R.id.previewRouteBtn);
+        startTime = findViewById(R.id.startTime);
+        endTime = findViewById(R.id.endTime);
 
-// Spinner options
-        String[] relations = {
-                "Select Relation",
-                "Parent",
-                "Spouse",
-                "Sibling",
-                "Friend",
-                "Relative",
-                "Other"
-        };
+        contactName = findViewById(R.id.contactName);
+        contactNumber = findViewById(R.id.contactNumber);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                relations
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerRelation.setAdapter(adapter);
+        hotelName = findViewById(R.id.hotelName);
+        transportType = findViewById(R.id.transportType);
 
+        startTripBtn = findViewById(R.id.startTripBtn);
 
-        // 🔹 Initialize fields
-        inputStart = findViewById(R.id.input_start);
-        inputDestination = findViewById(R.id.input_destination);
-        inputVehicle = findViewById(R.id.input_vehicle);
-        inputHotel = findViewById(R.id.input_hotel);
-        inputEmergencyName = findViewById(R.id.input_emergency_name);
-        inputEmergencyNumber = findViewById(R.id.input_emergency_number);
-        spinnerRelation = findViewById(R.id.spinner_relation);
-        btnGenerateTrip = findViewById(R.id.btn_generate_trip);
-        stopContainer = findViewById(R.id.stopContainer);
-        btnAddStop = findViewById(R.id.btn_add_stop);
+        // Disable typing for date fields
+        startTime.setFocusable(false);
+        endTime.setFocusable(false);
 
+        startTime.setOnClickListener(v -> showDateTimePicker(startTime));
+        endTime.setOnClickListener(v -> showDateTimePicker(endTime));
+        previewRouteBtn.setOnClickListener(v -> openRoutePreview());
 
-        btnGenerateTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateForm();
-            }
-        });
-
-        btnAddStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewStopField();
-            }
-        });
-
+        startTripBtn.setOnClickListener(v -> validateForm());
     }
 
     private void validateForm() {
 
-        // 🔹 Starting Point
-        if (TextUtils.isEmpty(inputStart.getText().toString().trim())) {
-            inputStart.setError("Enter starting location");
-            inputStart.requestFocus();
+        if (TextUtils.isEmpty(startLocation.getText().toString().trim())) {
+            startLocation.setError("Enter start location");
             return;
         }
 
-        // 🔹 Destination
-        if (TextUtils.isEmpty(inputDestination.getText().toString().trim())) {
-            inputDestination.setError("Enter destination");
-            inputDestination.requestFocus();
+        if (TextUtils.isEmpty(destinationLocation.getText().toString().trim())) {
+            destinationLocation.setError("Enter destination");
             return;
         }
 
-        // 🔹 Vehicle / Transport
-        if (TextUtils.isEmpty(inputVehicle.getText().toString().trim())) {
-            inputVehicle.setError("Enter vehicle / transport info");
-            inputVehicle.requestFocus();
+        if (TextUtils.isEmpty(startTime.getText().toString().trim())) {
+            startTime.setError("Select start time");
             return;
         }
 
-        // 🔹 Hotel
-        if (TextUtils.isEmpty(inputHotel.getText().toString().trim())) {
-            inputHotel.setError("Enter hotel name");
-            inputHotel.requestFocus();
+        if (TextUtils.isEmpty(endTime.getText().toString().trim())) {
+            endTime.setError("Select end time");
             return;
         }
 
-        // 🔹 Emergency Contact Name
-        if (TextUtils.isEmpty(inputEmergencyName.getText().toString().trim())) {
-            inputEmergencyName.setError("Enter emergency contact name");
-            inputEmergencyName.requestFocus();
+        if (TextUtils.isEmpty(contactName.getText().toString().trim())) {
+            contactName.setError("Enter emergency contact name");
             return;
         }
 
-        // 🔹 Emergency Contact Number (10 digits)
-        String number = inputEmergencyNumber.getText().toString().trim();
+        String number = contactNumber.getText().toString().trim();
+
         if (TextUtils.isEmpty(number)) {
-            inputEmergencyNumber.setError("Enter emergency contact number");
-            inputEmergencyNumber.requestFocus();
+            contactNumber.setError("Enter contact number");
             return;
         }
+
         if (number.length() != 10) {
-            inputEmergencyNumber.setError("Enter valid 10-digit number");
-            inputEmergencyNumber.requestFocus();
+            contactNumber.setError("Enter valid 10 digit number");
             return;
         }
 
-        // 🔹 Relation Spinner
-        if (spinnerRelation.getSelectedItemPosition() == 0) {
-            Toast.makeText(this, "Please select relation", Toast.LENGTH_SHORT).show();
-            spinnerRelation.requestFocus();
-            return;
-        }
+        String tripName = "Tour Trip";
 
-        // 🔹 Stops Validation (jitne bhi add kiye gaye unme se koi empty na ho)
-        // 🔹 Single string jisme sab stops comma-separated store honge
-        StringBuilder stopBuilder = new StringBuilder();
+        String startingLocation = startLocation.getText().toString();
+        String endingLocation = destinationLocation.getText().toString();
 
-        for (int i = 0; i < stopContainer.getChildCount(); i++) {
-            View child = stopContainer.getChildAt(i);
+        String startingDandT = startTime.getText().toString();
+        String endingDandT = endTime.getText().toString();
 
-            if (child instanceof LinearLayout) {
-                LinearLayout stopLayout = (LinearLayout) child;
+        String stops = intermediateStops.getText().toString();
 
-                for (int j = 0; j < stopLayout.getChildCount(); j++) {
-                    View innerChild = stopLayout.getChildAt(j);
+        String transportation = transportType.getText().toString();
+        String hotel = hotelName.getText().toString();
 
-                    if (innerChild instanceof EditText) {
-                        EditText stopField = (EditText) innerChild;
-                        String stopText = stopField.getText().toString().trim();
+        String emergencyName = contactName.getText().toString();
+        String emergencyContact = contactNumber.getText().toString();
 
-                        if (TextUtils.isEmpty(stopText)) {
-                            stopField.setError("Enter stop location");
-                            stopField.requestFocus();
-                            return;
-                        }
-
-                        // 👉 Add to single string (comma separated)
-                        if (stopBuilder.length() > 0) {
-                            stopBuilder.append(",");
-                        }
-                        stopBuilder.append(stopText);
-                    }
-                }
-            }
-        }
-
-// 🔹 Final comma-separated string
-        String stopsCommaSeparated = stopBuilder.toString();
-
-
-
-        // ✅ Agar sab valid hai
-
-        String tripName = "null";
-        String startingLocation = inputStart.getText().toString();
-        String endingLocation = inputDestination.getText().toString();
-        String startingDandT = "null";
-        String endingDandT = "null";
-        String intermediateStops = stopsCommaSeparated;
-        String transportation = inputVehicle.getText().toString();
-        String hotelName = inputHotel.getText().toString();
-        String contactName = inputEmergencyName.getText().toString();
-        String emergencyContact = inputEmergencyNumber.getText().toString();
-
-        Trip trip = new Trip(tripName, startingLocation, endingLocation, startingDandT, endingDandT, intermediateStops, transportation, hotelName, contactName, emergencyContact);
+        Trip trip = new Trip(
+                tripName,
+                startingLocation,
+                endingLocation,
+                startingDandT,
+                endingDandT,
+                stops,
+                transportation,
+                hotel,
+                emergencyName,
+                emergencyContact
+        );
 
         ApiService apiService = ApiClient.getClient(TripPlan.this).create(ApiService.class);
 
@@ -211,98 +137,98 @@ public class TripPlan extends AppCompatActivity {
             public void onResponse(Call<Trip> call, Response<Trip> response) {
 
                 if (response.isSuccessful()) {
-                    Toast.makeText(TripPlan.this, "Trip Created!", Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(TripPlan.this, DigitalIdActivity.class);
+                    Toast.makeText(TripPlan.this, "Trip Created Successfully!", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(TripPlan.this, Profile.class);
                     startActivity(intent);
                     finish();
 
                 } else {
+
                     Toast.makeText(TripPlan.this, "Error: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Trip> call, Throwable t) {
+
                 Toast.makeText(TripPlan.this, "Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-
-//        save all the trip details at the database
-//
-//        String tripId = "TRIP-" + System.currentTimeMillis() + UUID.randomUUID().toString();
-//
-//        Intent intent = new Intent(TripPlan.this, DigitalIdActivity.class);
-//        startActivity(intent);
-//        finish();
-//
-//
-//        Toast.makeText(this, "Trip ID Generated Successfully ✅", Toast.LENGTH_LONG).show();
-
     }
 
+    private void showDateTimePicker(EditText targetField) {
 
+        final Calendar calendar = Calendar.getInstance();
 
-    private void addNewStopField() {
-        stopCount++;
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Parent layout banate hain (EditText + Button ko hold karega)
-        LinearLayout stopLayout = new LinearLayout(this);
-        stopLayout.setOrientation(LinearLayout.HORIZONTAL);
-        stopLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        stopLayout.setPadding(0, 8, 0, 8);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                TripPlan.this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
 
-        // Stop ka EditText
-        EditText newStop = new EditText(this);
-        LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(
-                0,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1  // Weight = 1 (poora space lega)
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(
+                            TripPlan.this,
+                            (timeView, selectedHour, selectedMinute) -> {
+
+                                String dateTime = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear
+                                        + " " + selectedHour + ":" + selectedMinute;
+
+                                targetField.setText(dateTime);
+
+                            },
+                            hour,
+                            minute,
+                            true
+                    );
+
+                    timePickerDialog.show();
+
+                },
+                year,
+                month,
+                day
         );
-        newStop.setLayoutParams(etParams);
-        newStop.setHint("Stop " + stopCount);
-        newStop.setBackgroundResource(android.R.drawable.edit_text);
-        newStop.setPadding(10, 10, 10, 10);
-        newStop.setTextColor(Color.BLACK);
 
-        // Remove button
-        Button removeBtn = new Button(this);
-        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        removeBtn.setLayoutParams(btnParams);
-        removeBtn.setText("❌");
-        removeBtn.setBackgroundColor(Color.TRANSPARENT);
-        removeBtn.setTextSize(18);
+        datePickerDialog.show();
+    }
 
-        // Click karte hi pura stopLayout delete hoga
-        removeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopContainer.removeView(stopLayout);
-            }
-        });
+    private void openRoutePreview() {
 
-        // Add EditText & Button in parent layout
-        stopLayout.addView(newStop);
-        stopLayout.addView(removeBtn);
+        String start = startLocation.getText().toString().trim();
+        String destination = destinationLocation.getText().toString().trim();
+        String stops = intermediateStops.getText().toString().trim();
 
-        // Finally add parent layout in stopContainer
-        stopContainer.addView(stopLayout);
+        if (start.isEmpty() || destination.isEmpty()) {
+            Toast.makeText(this, "Enter start and destination first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String uri;
+
+        if (!stops.isEmpty()) {
+            uri = "https://www.google.com/maps/dir/" + start + "/" + stops + "/" + destination;
+        } else {
+            uri = "https://www.google.com/maps/dir/" + start + "/" + destination;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setPackage("com.google.android.apps.maps");
+
+        startActivity(intent);
     }
 
     @Override
     public void onBackPressed() {
 
-        Intent intent = new Intent(TripPlan.this, Dashboard.class);
+        Intent intent = new Intent(TripPlan.this, Profile.class);
         startActivity(intent);
-
         super.onBackPressed();
     }
-
 }

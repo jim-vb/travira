@@ -7,7 +7,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -20,36 +22,41 @@ public interface ApiService {
     @POST("api/users/login")
     Call<LoginResponse> getUser(@Body CheckUser checkUser);
 
-    // ---------------- Digital IDs ----------------
+    // ---------------- TRIPS ----------------
     @POST("api/trips")
     Call<Trip> saveTrip(@Body Trip trip);
-
+//---------------------SOS FEATURE----------
     @POST("api/emergency-notifications/sos")
     Call<EmergencyRequest> setSos(@Body EmergencyRequest emergencyRequest);
 
-    // ---------------- Locations ----------------
-    @GET("api/safety-score")
-    Call<String> getSafety();
-
-    @GET("api/locations/{phone}")
-    Call<String> getLocation(@Path("phone") String phone);
-
-    // ---------------- Emergencies / SOS ----------------
-    @POST("api/emergencies")
-    Call<Void> setEmergency(@Body EmergencyRequest emergencyRequest);
-
-    @GET("api/emergencies/{phone}")
-    Call<String> getEmergency(@Path("phone") String phone);
-
-    // ---------------- Safety ----------------
-//    @GET("api/safety/{phone}")
-//    Call<String> getSafety(@Path("phone") String phone);
-
-    // ---------------- Alerts ----------------
-    @GET("api/alerts")
-    Call<List<String>> getAlerts();
-
-    // ---------------- Check Connection ----------------
+//-------------------CONNECTION--------------
     @GET("check")
     Call<StatusResponse> getConnection();
+    //------------------ME-------------------------------
+    @GET("api/users/me")
+    Call<User> getProfile(@Header("Authorization") String token);
+    //----------------user-trip-infos--------------------
+    @GET("/api/trips")
+    Call<GetTrip> getTrips(@Header("Authorization") String token);
+    //------------------ Current-location ---------------------------
+    @POST("api/current-location")
+    Call<StatusResponse> saveCurrentLocation(@Body CurrentLocationRequest request);
+
+    @PUT("api/current-location")
+    Call<StatusResponse> updateCurrentLocation(@Body CurrentLocationRequest request);
+
+    //-------------------TRIP-Itinerary---------------------------------------
+
+    @GET("api/trips/{tripId}")
+    Call<TripResponse> getTripById(
+            @Header("Authorization") String token,
+            @Path("tripId") String tripId
+    );
+
+    @PUT("api/trips/{tripId}")
+    Call<Void> updateTrip(
+            @Header("Authorization") String token,
+            @Path("tripId") String tripId,
+            @Body Trip trip
+    );
 }
