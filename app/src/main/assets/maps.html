@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        html, body{
+        height:100%;
+        margin:0;
+        }
+
+        #map{
+        height:100%;
+        width:100%;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script>
+
+    var map;
+    var userMarker;
+    var escortMarker;
+    var routeLine = null;
+
+    var mapReady = false;
+    var pendingRoute = null;
+
+    /* animation state */
+    var lastPosition = null;
+    var lastEscortPosition = null;
+    var animationDuration = 2000;
+
+    function initMap(){
+
+    map = L.map('map').setView([28.6139,77.2090],15);
+
+    L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {maxZoom:19}
+    ).addTo(map);
+
+    /* USER MARKER (RED) */
+
+    userMarker = L.marker([28.6139,77.2090],{
+    icon: L.icon({
+    iconUrl:"https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png",
+    iconSize:[32,32],
+    iconAnchor:[16,32]
+    })
+    }).addTo(map);
+
+    /* ESCORT MARKER (BLUE) */
+
+<!--    escortMarker = L.marker([28.6139,77.2090],{-->
+<!--    icon: L.icon({-->
+<!--    iconUrl:"https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png",-->
+<!--    iconSize:[32,32],-->
+<!--    iconAnchor:[16,32]-->
+<!--    })-->
+<!--    }).addTo(map);-->
+
+    mapReady = true;
+
+    console.log("Map ready");
+
+    if(pendingRoute){
+    drawExpectedRoute(pendingRoute);
+    pendingRoute = null;
+    }
+
+    }
+
+    /* USER LOCATION UPDATE */
+
+    function updateUserLocation(lat,lng){
+
+    if(!mapReady) return;
+
+    var newPosition = L.latLng(lat,lng);
+
+    if(!lastPosition){
+
+    userMarker.setLatLng(newPosition);
+    lastPosition = newPosition;
+    map.panTo(newPosition);
+    return;
+
+    }
+
+    animateUser(lastPosition,newPosition);
+    lastPosition = newPosition;
+
+    }
+
+    /* ESCORT LOCATION UPDATE */
+
+    function updateEscortLocation(lat,lng){
+
+    if(!mapReady) return;
+
+    var newPosition = L.latLng(lat,lng);
+
+    if(!lastEscortPosition){
+
+    escortMarker.setLatLng(newPosition);
+    lastEscortPosition = newPosition;
+    return;
+
+    }
+
+    animateEscort(lastEscortPosition,newPosition);
+    lastEscortPosition = newPosition;
+
+    }
+
+    /* USER ANIMATION */
+
+    function animateUser(start,end){
+
+    var frames = 30;
+    var current = 0;
+
+    var latStep = (end.lat-start.lat)/frames;
+    var lngStep = (end.lng-start.lng)/frames;
+
+    function move(){
+
+    current++;
+
+    var lat = start.lat + latStep*current;
+    var lng = start.lng + lngStep*current;
+
+    userMarker.setLatLng([lat,lng]);
+
+    if(current<frames){
+    requestAnimationFrame(move);
+    }else{
+    map.panTo([end.lat,end.lng]);
+    }
+
+    }
+
+    move();
+
+    }
+
+    /* ESCORT ANIMATION */
+
+    function animateEscort(start,end){
+
+    var frames = 30;
+    var current = 0;
+
+    var latStep = (end.lat-start.lat)/frames;
+    var lngStep = (end.lng-start.lng)/frames;
+
+    function move(){
+
+    current++;
+
+    var lat = start.lat + latStep*current;
+    var lng = start.lng + lngStep*current;
+
+    escortMarker.setLatLng([lat,lng]);
+
+    if(current<frames){
+    requestAnimationFrame(move);
+    }
+
+    }
+
+    move();
+
+    }
+
+    /* DRAW EXPECTED ROUTE */
+
+    function drawExpectedRoute(route){
+
+    if(!mapReady){
+    pendingRoute = route;
+    console.log("Route stored until map ready");
+    return;
+    }
+
+    let latlngs = route.map(function(p){
+    return [p[1],p[0]];
+    });
+
+    if(routeLine){
+    map.removeLayer(routeLine);
+    }
+
+    routeLine = L.polyline(latlngs,{
+    color:'blue',
+    weight:5
+    }).addTo(map);
+
+    map.fitBounds(routeLine.getBounds(),{
+    padding:[40,40]
+    });
+
+    console.log("Route drawn with "+latlngs.length+" points");
+
+    }
+
+    /* ANDROID ENTRY POINT */
+
+    function receiveRouteFromAndroid(routeJson){
+
+    try{
+    drawExpectedRoute(routeJson);
+    }catch(e){
+    console.log("Route parse error",e);
+    }
+
+    }
+
+    window.onload = initMap;
+
+</script>
+
+</body>
+</html>

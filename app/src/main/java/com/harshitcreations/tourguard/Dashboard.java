@@ -54,10 +54,10 @@ public class Dashboard extends AppCompatActivity {
     String phone_number;
 
     private int greetingIndex = 0;
-    private int safetyScoreIndex = 1;
-    private int quickAccessIndex = 2;
-    private int locationIndex = 3;
-    private int safetyTipIndex = 4;
+    private int userMapIndex = 1;
+    private int safetyScoreIndex = 2;
+    private int quickAccessIndex = 3;
+    private int locationIndex = 4;
 
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
@@ -69,8 +69,7 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
-        checkKreShadni();
+        //startActivity(new Intent(this, MapTestActivity.class));
 
         phone_number = getSavedPhoneNumberFromPrefs();
 
@@ -87,10 +86,10 @@ public class Dashboard extends AppCompatActivity {
         }
 
         itemList.add(new DashboardItem(DashboardItemType.GREETING, name));
+        itemList.add(new DashboardItem(DashboardItemType.USER_MAP,null));
         itemList.add(new DashboardItem(DashboardItemType.SAFETY_SCORE, null));
         itemList.add(new DashboardItem(DashboardItemType.QUICK_ACCESS, null));
         itemList.add(new DashboardItem(DashboardItemType.LOCATION, "Fetching location..."));
-        itemList.add(new DashboardItem(DashboardItemType.SAFETY_TIP, null));
 
         adapter = new DashboardAdapter(
                 this,
@@ -106,6 +105,7 @@ public class Dashboard extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         checkLocationPermission();
+        fetchExpectedRoute(tripId);
     }
 
     @Override
@@ -262,77 +262,15 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void showHighRiskAlert() {
+        // Create an Intent to start AlertHistoryActivity
+        Intent intent = new Intent(this, AlertHistoryActivity.class);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
+        // Optional: pass some data if needed
+        // intent.putExtra("key", "value");
 
-        View dialogView = inflater.inflate(R.layout.high_risk_alert, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
-
-        dialog.show();
-
-        TextView txtLocation = dialogView.findViewById(R.id.txtLocation);
-        Button btnDismiss = dialogView.findViewById(R.id.btnDismiss);
-        Button btnSOS = dialogView.findViewById(R.id.btnSOS);
-        TextView btnClose = dialogView.findViewById(R.id.btnClose);
-
-        txtLocation.setText(
-                "ACEM, Faridabad\nRisk Level: High • Reported incidents: 3 this week");
-
-        btnDismiss.setOnClickListener(v -> dialog.dismiss());
-
-        btnSOS.setOnClickListener(v -> {
-
-            dialog.dismiss();
-            startActivity(new Intent(this, SosActivity.class));
-        });
-
-        btnClose.setOnClickListener(v -> dialog.dismiss());
+        // Start the activity
+        startActivity(intent);
     }
-
-    private void checkKreShadni() {
-
-        ApiService apiService =
-                ApiClient.getClient(Dashboard.this).create(ApiService.class);
-
-        apiService.getConnection().enqueue(new retrofit2.Callback<StatusResponse>() {
-
-            @Override
-            public void onResponse(Call<StatusResponse> call,
-                                   retrofit2.Response<StatusResponse> response) {
-
-                if (response.isSuccessful() && response.body() != null) {
-
-                    Toast.makeText(Dashboard.this,
-                            "API Connected: " + response.body().getStatus(),
-                            Toast.LENGTH_LONG).show();
-
-                } else {
-
-                    Toast.makeText(Dashboard.this,
-                            "API Error: " + response.code(),
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<StatusResponse> call, Throwable t) {
-
-                Toast.makeText(Dashboard.this,
-                        "Connection Failed: " + t.getMessage(),
-                        Toast.LENGTH_LONG).show();
-
-                Log.e("API_CHECK", "Connection Failed", t);
-            }
-        });
-    }
-
 
     private String getSavedPhoneNumberFromPrefs() {
 
@@ -400,6 +338,8 @@ public class Dashboard extends AppCompatActivity {
                     double lat = location.getLatitude();
                     double lng = location.getLongitude();
 
+//                    adapter.updateMapLocation(lat, lng);
+
                     getCityAndState(lat, lng, result -> {
 
                         String locationText = result.getCity() + ", " + result.getState();
@@ -439,5 +379,69 @@ public class Dashboard extends AppCompatActivity {
         if (locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
+    }
+    private void fetchExpectedRoute(String tripId){
+
+        ApiService apiService =
+                ApiClient.getClient(Dashboard.this).create(ApiService.class);
+//THIS SHIT IS STATIC AND NEEDED TO BE UPDATED ACCORDINGLY
+        MonitoringRequest request =
+                new MonitoringRequest("6",
+                        "69b3acca948e60c949583a6c");
+
+        apiService.getTripMonitoring(request).enqueue(new retrofit2.Callback<MonitoringResponse>() {
+
+            @Override
+            public void onResponse(Call<MonitoringResponse> call,
+                                   retrofit2.Response<MonitoringResponse> response) {
+
+                if(response.isSuccessful() && response.body() != null){
+
+                    List<List<Double>> route = response.body().expected_route;
+
+                    Log.d("ROUTE_DEBUG", "Route size: " + route.size());
+
+                    adapter.drawExpectedRoute(route);
+
+                    SimulationApiService apiService =
+                            SimulationApiClient.getClient().create(SimulationApiService.class);
+
+                    RouteSimulator simulator =
+                            new RouteSimulator(apiService, route,
+                                    "69b3acca948e60c949583a6c",
+                                    6);
+
+                    simulator.setLocationListener((userLat,userLng,escortLat,escortLng) -> {
+
+                        runOnUiThread(() -> {
+
+                            adapter.updateMapLocation(userLat,userLng);
+                            adapter.updateEscortLocation(escortLat,escortLng);
+
+                        });
+
+                    });
+
+                    simulator.setSafetyListener((score, level) -> {
+
+                        runOnUiThread(() -> {
+
+                            adapter.updateSafetyScore(score, level);
+
+                        });
+
+                    });
+
+                    simulator.start();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MonitoringResponse> call, Throwable t) {
+
+                Log.e("ROUTE_API", t.getMessage());
+            }
+        });
+
     }
 }

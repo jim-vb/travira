@@ -59,4 +59,10 @@ public interface ApiService {
             @Path("tripId") String tripId,
             @Body Trip trip
     );
+
+    @POST("api/trips/monitoring/detail")
+    Call<MonitoringResponse> getTripMonitoring(
+            @Body MonitoringRequest request
+    );
+
 }

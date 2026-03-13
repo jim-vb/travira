@@ -2,6 +2,7 @@ package com.harshitcreations.tourguard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -114,9 +117,19 @@ public class SignUp extends AppCompatActivity {
 
                 } else {
 
+                    String errorMessage = "Unknown error";
+
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMessage = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     Toast.makeText(SignUp.this,
-                            "Signup failed: " + response.code(),
-                            Toast.LENGTH_SHORT).show();
+                            "Signup failed: " + errorMessage,
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -127,7 +140,7 @@ public class SignUp extends AppCompatActivity {
 
                 Toast.makeText(SignUp.this,
                         "Network error: " + t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_LONG).show();
             }
         });
     }
